@@ -1,0 +1,18 @@
+# Gitee Pages 托管 — 排除备份和临时文件
+
+# Excel backups
+outages_backup*.xlsx
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Temp files
+temp_output.txt
+
+# IDE
+.vscode/
+.idea/
+
+# Claude internal
+.claude/
