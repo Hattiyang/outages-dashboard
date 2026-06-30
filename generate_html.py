@@ -117,6 +117,38 @@ body {{
     color: #333;
     min-height: 100vh;
 }}
+
+/* Password Gate */
+#pw-overlay {{
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(135deg, #1a3a5c 0%, #2d6aa0 100%);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999;
+}}
+#pw-box {{
+    background: white; border-radius: 12px; padding: 36px 32px;
+    text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    max-width: 360px; width: 90%;
+}}
+#pw-box h2 {{ color: #1a3a5c; margin-bottom: 8px; font-size: 1.3em; }}
+#pw-box p {{ color: #888; font-size: 0.85em; margin-bottom: 20px; }}
+#pw-box input {{
+    width: 100%; padding: 10px 14px; border: 1px solid #d0d5dd;
+    border-radius: 6px; font-size: 1em; text-align: center; outline: none;
+    margin-bottom: 12px;
+}}
+#pw-box input:focus {{ border-color: #2d6aa0; box-shadow: 0 0 0 3px rgba(45,106,160,0.1); }}
+#pw-box button {{
+    width: 100%; padding: 10px; background: #2d6aa0; color: white;
+    border: none; border-radius: 6px; font-size: 1em; cursor: pointer;
+    font-weight: 600;
+}}
+#pw-box button:hover {{ background: #1a3a5c; }}
+#pw-error {{ color: #c0392b; font-size: 0.85em; margin-top: 8px; display: none; }}
+
+/* Main content (hidden until unlocked) */
+#main-content {{ display: none; }}
+
 .header {{
     background: linear-gradient(135deg, #1a3a5c 0%, #2d6aa0 100%);
     color: white;
@@ -266,6 +298,20 @@ tbody tr:hover {{ background: #f8fafc; }}
 </head>
 <body>
 
+<!-- Password Gate -->
+<div id="pw-overlay">
+<div id="pw-box">
+    <h2>🔒 访问受限</h2>
+    <p>请输入访问密码</p>
+    <input type="password" id="pw-input" placeholder="密码" onkeydown="if(event.key==='Enter')checkPw()">
+    <button onclick="checkPw()">确 定</button>
+    <div id="pw-error">密码错误，请重试</div>
+</div>
+</div>
+
+<!-- Main Content -->
+<div id="main-content">
+
 <div class="header">
     <h1>📡 信息通信网络事故数据库</h1>
     <p>全球通信网络重大中断事故记录 | 更新于 {now_str}</p>
@@ -337,6 +383,33 @@ tbody tr:hover {{ background: #f8fafc; }}
     <a href="outages.xlsx" download>📥 下载完整 Excel</a> ·
     由 Claude Code 自动维护
 </div>
+
+</div><!-- #main-content -->
+
+<script>
+// Password check
+const CORRECT_HASH = 'aa1cd1c664a86c8b1e7a21440e4817c94ce8a73c9f50e9be10c16d4fa16f1c36';
+
+async function sha256(msg) {{
+    const buf = new TextEncoder().encode(msg);
+    const hash = await crypto.subtle.digest('SHA-256', buf);
+    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
+}}
+
+async function checkPw() {{
+    const input = document.getElementById('pw-input').value;
+    const hash = await sha256(input);
+    if (hash === CORRECT_HASH) {{
+        document.getElementById('pw-overlay').style.display = 'none';
+        document.getElementById('main-content').style.display = '';
+    }} else {{
+        document.getElementById('pw-error').style.display = '';
+        document.getElementById('pw-input').value = '';
+        document.getElementById('pw-input').focus();
+    }}
+}}
+
+document.getElementById('pw-input').focus();
 
 <script>
 // Tab switching
