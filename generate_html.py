@@ -387,29 +387,29 @@ tbody tr:hover {{ background: #f8fafc; }}
 </div><!-- #main-content -->
 
 <script>
-// Password check
-const CORRECT_HASH = 'aa1cd1c664a86c8b1e7a21440e4817c94ce8a73c9f50e9be10c16d4fa16f1c36';
+// Password check — simple and reliable
+var PW_KEY = 'Y3h6eA==';  // base64 of the password
 
-async function sha256(msg) {{
-    const buf = new TextEncoder().encode(msg);
-    const hash = await crypto.subtle.digest('SHA-256', buf);
-    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
-}}
-
-async function checkPw() {{
-    const input = document.getElementById('pw-input').value;
-    const hash = await sha256(input);
-    if (hash === CORRECT_HASH) {{
-        document.getElementById('pw-overlay').style.display = 'none';
-        document.getElementById('main-content').style.display = '';
-    }} else {{
+function checkPw() {{
+    var input = document.getElementById('pw-input').value;
+    try {{
+        var encoded = btoa(input);
+        if (encoded === PW_KEY) {{
+            document.getElementById('pw-overlay').style.display = 'none';
+            document.getElementById('main-content').style.display = '';
+        }} else {{
+            document.getElementById('pw-error').style.display = '';
+            document.getElementById('pw-input').value = '';
+            document.getElementById('pw-input').focus();
+        }}
+    }} catch(e) {{
         document.getElementById('pw-error').style.display = '';
         document.getElementById('pw-input').value = '';
-        document.getElementById('pw-input').focus();
     }}
 }}
 
 document.getElementById('pw-input').focus();
+</script>
 
 <script>
 // Tab switching
