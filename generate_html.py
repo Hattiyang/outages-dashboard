@@ -303,8 +303,8 @@ tbody tr:hover {{ background: #f8fafc; }}
 <div id="pw-box">
     <h2>🔒 访问受限</h2>
     <p>请输入访问密码</p>
-    <input type="password" id="pw-input" placeholder="密码" onkeydown="if(event.key==='Enter')checkPw()">
-    <button onclick="checkPw()">确 定</button>
+    <input type="password" id="pw-input" placeholder="密码" onkeydown="if(event.key==='Enter'){{document.getElementById('pw-btn').click()}}">
+    <button id="pw-btn">确 定</button>
     <div id="pw-error">密码错误，请重试</div>
 </div>
 </div>
@@ -387,27 +387,22 @@ tbody tr:hover {{ background: #f8fafc; }}
 </div><!-- #main-content -->
 
 <script>
-// Password check — simple and reliable
-var PW_KEY = 'Y3h6eA==';  // base64 of the password
-
-function checkPw() {{
-    var input = document.getElementById('pw-input').value;
-    try {{
-        var encoded = btoa(input);
-        if (encoded === PW_KEY) {{
-            document.getElementById('pw-overlay').style.display = 'none';
-            document.getElementById('main-content').style.display = '';
-        }} else {{
-            document.getElementById('pw-error').style.display = '';
-            document.getElementById('pw-input').value = '';
-            document.getElementById('pw-input').focus();
-        }}
-    }} catch(e) {{
+// Password verification with event listener
+document.getElementById('pw-btn').addEventListener('click', function() {{
+    var p = document.getElementById('pw-input').value;
+    if (btoa(p) === 'Y3h6eA==') {{
+        document.getElementById('pw-overlay').style.display = 'none';
+        document.getElementById('main-content').style.display = '';
+    }} else {{
         document.getElementById('pw-error').style.display = '';
         document.getElementById('pw-input').value = '';
+        document.getElementById('pw-input').focus();
     }}
-}}
-
+}});
+// Enter key support
+document.getElementById('pw-input').addEventListener('keydown', function(e) {{
+    if (e.key === 'Enter') document.getElementById('pw-btn').click();
+}});
 document.getElementById('pw-input').focus();
 </script>
 
