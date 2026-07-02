@@ -303,7 +303,7 @@ tbody tr:hover {{ background: #f8fafc; }}
 <div id="pw-box">
     <h2>🔒 访问受限</h2>
     <p>请输入访问密码</p>
-    <input type="password" id="pw-input" placeholder="密码" onkeydown="if(event.key==='Enter'){{document.getElementById('pw-btn').click()}}">
+    <input type="password" id="pw-input" placeholder="密码">
     <button id="pw-btn">确 定</button>
     <div id="pw-error">密码错误，请重试</div>
 </div>
@@ -387,23 +387,30 @@ tbody tr:hover {{ background: #f8fafc; }}
 </div><!-- #main-content -->
 
 <script>
-// Password verification with event listener
-document.getElementById('pw-btn').addEventListener('click', function() {{
-    var p = document.getElementById('pw-input').value;
-    if (btoa(p) === 'Y3h6eA==') {{
-        document.getElementById('pw-overlay').style.display = 'none';
-        document.getElementById('main-content').style.display = '';
-    }} else {{
-        document.getElementById('pw-error').style.display = '';
-        document.getElementById('pw-input').value = '';
-        document.getElementById('pw-input').focus();
+(function() {{
+    var input = document.getElementById('pw-input');
+    var btn = document.getElementById('pw-btn');
+    var overlay = document.getElementById('pw-overlay');
+    var main = document.getElementById('main-content');
+    var err = document.getElementById('pw-error');
+
+    function tryPw() {{
+        if (input.value === 'cxzx') {{
+            overlay.style.display = 'none';
+            main.style.display = 'block';
+        }} else {{
+            err.style.display = '';
+            input.value = '';
+            input.focus();
+        }}
     }}
-}});
-// Enter key support
-document.getElementById('pw-input').addEventListener('keydown', function(e) {{
-    if (e.key === 'Enter') document.getElementById('pw-btn').click();
-}});
-document.getElementById('pw-input').focus();
+
+    btn.onclick = tryPw;
+    input.onkeydown = function(e) {{
+        if (e.key === 'Enter') tryPw();
+    }};
+    input.focus();
+}})();
 </script>
 
 <script>
